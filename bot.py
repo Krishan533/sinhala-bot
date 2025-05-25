@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-TOKEN = os.getenv("7242103550:AAEW9qfGhIcmMeP3OOFjWKkb-74O9XkdBKA")
+TOKEN = os.getenv("8077603292:AAGBw6NrqhqsNbdZ-YCI2F96TbrdupwKgHA")
 BLOGGER_LINK = os.getenv("https://alexahhj.blogspot.com/2025/05/blog-post.html")
 
 # Google Drive setup
