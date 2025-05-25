@@ -10,7 +10,6 @@ load_dotenv()
 TOKEN = os.getenv("7242103550:AAEW9qfGhIcmMeP3OOFjWKkb-74O9XkdBKA")
 BLOGGER_LINK = os.getenv("https://alexahhj.blogspot.com/2025/05/blog-post.html")
 
-
 # Google Drive setup
 gauth = GoogleAuth()
 gauth.LoadCredentialsFile("credentials/credentials.json")
@@ -28,11 +27,11 @@ MEDIA_FOLDER = "media"
 if not os.path.exists(MEDIA_FOLDER):
     os.makedirs(MEDIA_FOLDER)
 
-# Start command
+# Start command (VPN ads removed)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🔥 ආයුබෝවන්! ඡායාරූප හෝ වීඩියෝවක් එවන්න, Download link ලබා දෙන්නම්! 💋")
+    await update.message.reply_text("🔥 ආයුබෝවන්! ඡායාරූප හෝ වීඩියෝවක් එවන්න, Full Video Download link ලබා දෙන්නම්! 💋")
 
-# Handle media upload
+# Handle media upload (Kamadenuwa BOT style)
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
     file_id = None
@@ -45,7 +44,7 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
         file_id = message.video.file_id
         file_name = f"video_{message.message_id}.mp4"
     else:
-        await message.reply_text("කරුණාකර ඡායාරූප හෝ වීඩියෝවක් එවන්න.")
+        await message.reply_text("කරුණාකර ඡායාරූප හෝ වීඩියෝවක් එවන්න!")
         return
 
     # Download file
@@ -60,15 +59,20 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_drive.InsertPermission({'type': 'anyone', 'value': 'anyone', 'role': 'reader'})
     file_link = file_drive['alternateLink']
 
-    # Send response
-    caption = f"🔥 මෙම එකතුව ඇතුලම චිකි! 💋\n15 ක් ඇතුලත ගිහින් Full Video Download කරන්න:\n{file_link}\n👉 Full Video"
-    await message.reply_photo(photo=open(file_path, 'rb'), caption=caption)
+    # Send response like Kamadenuwa BOT
+    caption = f"🔥 මෙම එකතුව ඇතුලම චිකි! 💋\nකාමදෙනුව 15 ක් ඇතුලත ගිහින් Full Video Download කරන්න:\n{file_link}"
+    keyboard = [
+        [InlineKeyboardButton("Full Video", url=file_link)],
+        [InlineKeyboardButton("Download", url=file_link)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await message.reply_photo(photo=open(file_path, 'rb'), caption=caption, reply_markup=reply_markup)
 
 # Handle download request
 async def handle_download(update: Update, context: ContextTypes.DEFAULT_TYPE):
     last_message = await update.message.chat.get_messages(offset=-1, limit=1)
     if last_message[0].photo or last_message[0].video:
-        file_link = last_message[0].caption.split("\n")[2]  # Extract Google Drive link
+        file_link = [btn.url for row in last_message[0].reply_markup.inline_keyboard for btn in row if btn.text in ["Full Video", "Download"]][0]
         await update.message.reply_text(f"🔥 Full Video Download: {file_link}")
     else:
         await update.message.reply_text("මුලින් ඡායාරූප/වීඩියෝවක් එවන්න!")
