@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
-BLOGGER_LINK = os.getenv("BLOGGER_LINK")
+TOKEN = os.getenv("7242103550:AAEW9qfGhIcmMeP3OOFjWKkb-74O9XkdBKA")
+BLOGGER_LINK = os.getenv("https://alexahhj.blogspot.com/2025/05/blog-post.html")
+
 
 # Google Drive setup
 gauth = GoogleAuth()
