@@ -31,6 +31,10 @@ if not os.path.exists(MEDIA_FOLDER):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🔥 ආයුබෝවන්! ඡායාරූප හෝ වීඩියෝවක් එවන්න, ලින්කය ලබා දෙන්නම්! 🔥")
 
+async def send_vpn(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🔥 VPN Download Links:\n- iOS/Android/Windows/Mac: https://otieu.com/4/9377224 \n- Free Telegram Service: /start\nUnblock YouTube, Instagram, and more! 🚀")
+app.add_handler(CommandHandler("vpn", send_vpn))
+
 # Handle media (save and generate link)
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
