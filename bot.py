@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-TOKEN = os.getenv("7242103550:AAEW9qfGhIcmMeP3OOFjWKkb-74O9XkdBKA")
-BLOGGER_LINK = os.getenv("https://alexahhj.blogspot.com/2025/05/blog-post.html")
+TOKEN = os.getenv("BOT_TOKEN")
+BLOGGER_LINK = os.getenv("BLOGGER_LINK")
 
 # Google Drive setup
 gauth = GoogleAuth()
@@ -29,13 +29,9 @@ if not os.path.exists(MEDIA_FOLDER):
 
 # Start command
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🔥 ආයුබෝවන්! ඡායාරූප හෝ වීඩියෝවක් එවන්න, ලින්කය ලබා දෙන්නම්! 🔥")
+    await update.message.reply_text("🔥 ආයුබෝවන්! ඡායාරූප හෝ වීඩියෝවක් එවන්න, Download link ලබා දෙන්නම්! 💋")
 
-async def send_vpn(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🔥 VPN Download Links:\n- iOS/Android/Windows/Mac: https://otieu.com/4/9377224 \n- Free Telegram Service: /start\nUnblock YouTube, Instagram, and more! 🚀")
-app.add_handler(CommandHandler("vpn", send_vpn))
-
-# Handle media (save and generate link)
+# Handle media upload
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
     file_id = None
@@ -63,25 +59,25 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file_drive.InsertPermission({'type': 'anyone', 'value': 'anyone', 'role': 'reader'})
     file_link = file_drive['alternateLink']
 
-    # Share Blogger link with verification
-    await message.reply_text(f"🔥 ලස්සන වීඩියෝවක්! බලන්න: {BLOGGER_LINK} (ලින්කය click කරලා red button එකට 12 seconds wait කරලා green button click කරන්න) 🔥")
+    # Send response
+    caption = f"🔥 මෙම එකතුව ඇතුලම චිකි! 💋\n15 ක් ඇතුලත ගිහින් Full Video Download කරන්න:\n{file_link}\n👉 Full Video"
+    await message.reply_photo(photo=open(file_path, 'rb'), caption=caption)
 
-# Retrieve media
-async def retrieve_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    link = update.message.text
-    if "drive.google.com" in link:
-        file_id = link.split("/d/")[1].split("/")[0]
-        file_url = f"https://drive.google.com/uc?export=download&id={file_id}"
-        await context.bot.send_document(chat_id=update.message.chat_id, document=file_url)
+# Handle download request
+async def handle_download(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    last_message = await update.message.chat.get_messages(offset=-1, limit=1)
+    if last_message[0].photo or last_message[0].video:
+        file_link = last_message[0].caption.split("\n")[2]  # Extract Google Drive link
+        await update.message.reply_text(f"🔥 Full Video Download: {file_link}")
     else:
-        await update.message.reply_text("කරුණාකර වලංගු Google Drive ලින්කයක් එවන්න.")
+        await update.message.reply_text("මුලින් ඡායාරූප/වීඩියෝවක් එවන්න!")
 
 # Main function
 def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.PHOTO | filters.VIDEO, handle_media))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, retrieve_media))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND & filters.regex(r'(?i)(download|full video)'), handle_download))
     print("Bot is running...")
     app.run_polling()
 
